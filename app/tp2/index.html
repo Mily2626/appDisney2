@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineVault - Publicar Recomendación</title>
+    <!-- Vinculación del nuevo CSS de Cine -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+    <header>
+        <h1><span>CINE</span>MA</span> 🍿🎥</h1>
+        <p>Comparte tus películas favoritas con la comunidad cinéfila</p>
+    </header>
+
+    <main>
+        <section>
+            <h2>🎬 Registrar Nueva Película</h2>
+
+            <form action="#" method="POST" id="form-recomendacion">
+                
+                <!-- Título -->
+                <div class="form-group">
+                    <label for="titulo">Título de la película *</label>
+                    <input 
+                        type="text" 
+                        id="titulo" 
+                        name="titulo" 
+                        placeholder="Ej: Interestelar, El Padrino, El Rey León..." 
+                        required
+                    >
+                </div>
+
+                <!-- Categoría -->
+                <div class="form-group">
+                    <label for="categoria">Categoría / Género *</label>
+                    <select id="categoria" name="categoria" required>
+                        <option value="" disabled selected>Selecciona un género</option>
+                        <option value="accion">Acción / Aventura</option>
+                        <option value="animacion">Animación / Familiar</option>
+                        <option value="ciencia_ficcion">Ciencia Ficción</option>
+                        <option value="drama">Drama</option>
+                        <option value="terror">Terror / Suspenso</option>
+                        <option value="comedia">Comedia</option>
+                    </select>
+                </div>
+
+                <!-- Año de Estreno -->
+                <div class="form-group">
+                    <label for="anio">Año de estreno *</label>
+                    <input 
+                        type="number" 
+                        id="año" 
+                        name="año" 
+                        min="1900" 
+                        max="2026" 
+                        placeholder="Ej: 2014" 
+                        required
+                    >
+                </div>
+
+                <!-- Puntuación -->
+                <div class="form-group">
+                    <label for="puntuacion">Calificación (1 al 5 ⭐) *</label>
+                    <input 
+                        type="number" 
+                        id="puntuacion" 
+                        name="puntuacion" 
+                        min="1" 
+                        max="5" 
+                        step="0.5" 
+                        placeholder="Ej: 5" 
+                        required
+                    >
+                </div>
+
+                <!-- URL de Portada -->
+                <div class="form-group">
+                    <label for="url_portada">URL del Póster (Imagen) *</label>
+                    <input 
+                        type="url" 
+                        id="url_portada" 
+                        name="url_portada" 
+                        placeholder="https://ejemplo.com/poster-pelicula.jpg" 
+                        required
+                    >
+                </div>
+
+                <!-- Checkbox -->
+                <div class="form-group checkbox-group">
+                    <input 
+                        type="checkbox" 
+                        id="apto_todo_publico" 
+                        name="apto_todo_publico" 
+                        value="si" 
+                        checked
+                    >
+                    <label for="apto_todo_publico">Apto para todo público / Familiar</label>
+                </div>
+
+                <!-- Reseña -->
+                <div class="form-group">
+                    <label for="resenia">Sinopsis / Reseña *</label>
+                    <textarea 
+                        id="reseña" 
+                        name="reseña" 
+                        rows="4" 
+                        placeholder="Escribe la sinopsis o resumen de la trama..." 
+                        required
+                    ></textarea>
+                </div>
+
+                <!-- ¿Por qué la recomendás? -->
+                <div class="form-group">
+                    <label for="motivo_recomendacion">¿Por qué la recomendás? *</label>
+                    <textarea 
+                        id="motivo_recomendacion" 
+                        name="motivo_recomendacion" 
+                        rows="3" 
+                        placeholder="Ej: Tiene un giro de trama inolvidable y efectos visuales increíbles..." 
+                        required
+                    ></textarea>
+                </div>
+
+                <!-- Botones -->
+                <div class="actions">
+                    <button type="submit">Publicar Recomendación</button>
+                    <button type="reset">Limpiar</button>
+                </div>
+
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 CineVault - Plataforma de Recomendaciones Cinematográficas</p>
+    </footer>
+
+<script type="module">
+    import { supabase } from './supabaseClient.js';
+
+    const formulario = document.getElementById('form-recomendacion');
+
+    formulario.addEventListener('submit', async (e) => {
+        e.preventDefault(); // Evita que la página se recargue sola
+
+        // Capturamos los datos de los inputs usando sus 'name' o 'id'
+        const nuevaPeli = {
+            titulo: document.getElementById('titulo').value,
+            categoria: document.getElementById('categoria').value,
+            año: parseInt(document.getElementById('año').value),
+            puntuacion: parseFloat(document.getElementById('puntuacion').value),
+            url_portada: document.getElementById('url_portada').value,
+            apto_todo_publico: document.getElementById('apto_todo_publico').checked,
+            reseña: document.getElementById('reseña').value,
+            motivo_recomendacion: document.getElementById('motivo_recomendacion').value
+        };
+
+        // Insertamos los datos en la tabla 'recomendaciones' de Supabase
+        const { data, error } = await supabase
+            .from('recomendaciones')
+            .insert([nuevaPeli]);
+
+        if (error) {
+            console.error('Error al guardar:', error);
+            alert('Hubo un error al publicar la recomendación.');
+        } else {
+            alert('¡Película publicada con éxito en la nube! 🍿');
+            formulario.reset(); // Limpia el formulario
+        }
+    });
+</script>
+
+</body>
+</html>
